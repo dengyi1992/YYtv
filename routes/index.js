@@ -45,7 +45,7 @@ myEvents.on('start', function () {
         if (timeTask.getYULE()) {
             if (timeTask.getMC()) {
                 if (timeTask.getLIVE()) {
-                    if (timeTask.getMC()) {
+                    if (timeTask.getSHOW()) {
                         if (timeTask.getDANCE()) {
                             this.cancel();
                             console.log('-------------------------------爬虫结束-------------------------------------')

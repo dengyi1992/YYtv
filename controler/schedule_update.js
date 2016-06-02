@@ -51,12 +51,17 @@ exports.getYULE = function () {
         if (error) {
             return console.log(error);
         }
-        var parse = JSON.parse(body);
-        if (parse.data.data.length == 0) {
-            yulepage = -9999;
-            return console.log('no more data');
+        try {
+            var parse = JSON.parse(body);
+            if (parse.data.data.length == 0) {
+                yulepage = -9999;
+                return console.log('no more data');
+            }
+            acquireData(parse);
+        } catch (e) {
+            console.log(e)
         }
-        acquireData(parse);
+
     });
     if (yulepage < 0) {
 
@@ -79,12 +84,16 @@ exports.getMC = function () {
         if (error) {
             return console.log(error);
         }
-        var parse = JSON.parse(body);
-        if (parse.data.data.length == 0) {
-            mcpage = -9999;
-            return console.log('no more data');
+        try {
+            var parse = JSON.parse(body);
+            if (parse.data.data.length == 0) {
+                mcpage = -9999;
+                return console.log('no more data');
+            }
+            acquireData(parse);
+        } catch (e) {
+            console.log(e)
         }
-        acquireData(parse);
     });
     if (mcpage < 0) {
 
@@ -109,12 +118,16 @@ exports.getLIVE = function () {
         if (error) {
             return console.log(error);
         }
-        var parse = JSON.parse(body);
-        if (parse.data.data.length == 0) {
-            livepage = -9999;
-            return console.log('no more data');
+        try {
+            var parse = JSON.parse(body);
+            if (parse.data.data.length == 0) {
+                livepage = -9999;
+                return console.log('no more data');
+            }
+            acquireData(parse);
+        } catch (e) {
+            console.log(e)
         }
-        acquireData(parse);
     });
     return false;
 
@@ -135,16 +148,20 @@ exports.getSHOW = function () {
         if (error) {
             return console.log(error);
         }
-        var parse = JSON.parse(body);
-        if (parse.data.data.length == 0) {
-            showpage = -9999;
-            return console.log('no more data');
+        try {
+            var parse = JSON.parse(body);
+            if (parse.data.data.length == 0) {
+                showpage = -9999;
+                return console.log('no more data');
+            }
+            acquireData(parse);
+        } catch (e) {
+            console.log(e)
         }
-        acquireData(parse);
     });
 
     return false;
-    
+
 };
 exports.getDANCE = function () {
 
@@ -159,12 +176,16 @@ exports.getDANCE = function () {
         if (error) {
             return console.log(error);
         }
-        var parse = JSON.parse(body);
-        if (parse.data.data.length == 0) {
-            dancepage = -9999;
-            return console.log('no more data');
+        try {
+            var parse = JSON.parse(body);
+            if (parse.data.data.length == 0) {
+                dancepage = -9999;
+                return console.log('no more data');
+            }
+            acquireData(parse);
+        } catch (e) {
+            console.log(e)
         }
-        acquireData(parse);
     });
     if (dancepage < 0) {
         mcpage = 1;
@@ -179,21 +200,26 @@ exports.getDANCE = function () {
 };
 function acquireData(data) {
     var sql = 'replace INTO yy (room_id, room_name, owner_uid, nickname, online, game_name, fans,tags) VALUES (?,?,?,?,?,?,?,?)';
-    if (data.data.data.size == 0) {
-        return console.log('没有数据了');
-    }
-    data.data.data.forEach(function (item) {
+    try {
+        if (data.data.data.size == 0) {
+            return console.log('没有数据了');
+        }
+        data.data.data.forEach(function (item) {
 
-        var params = [item.sid, item.desc, item.uid, item.name, item.users, item.biz, 0, item.tag];
-        conn.query(sql, params, function (err, result) {
-            if (err) {
-                console.log(err);
-                return;
-            }
+            var params = [item.sid, item.desc, item.uid, item.name, item.users, item.biz, 0, item.tag];
+            conn.query(sql, params, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+            });
 
         });
+    } catch (e) {
+        console.log(e)
+    }
 
-    });
 }
 
 
