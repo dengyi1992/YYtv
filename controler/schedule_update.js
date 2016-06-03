@@ -221,6 +221,59 @@ function acquireData(data) {
     }
 
 }
+var page = 1;
+var isGetFansFinish = false;
+exports.getFans = function () {
 
+    var limit_range = (page - 1) * 10 + ',' + 10;
+    var Sql = 'SELECT * FROM yy limit ' + limit_range + ';';
+    conn.query(Sql, function (err, rows, field) {
+        if (err) {
+            return console.log(err + '------------sql err--------------')
+        }
+        if (rows.length == 0) {
+            return isGetFansFinish = true;
+        }
+        page++;
+        for (var i = 0; i < rows.length; i++) {
+            myEvents.emit('updateFans', rows[i].room_id, rows[i].owner_uid);
+        }
+    });
+    if (isGetFansFinish) {
+        isGetFansFinish = false;
+        return true;
+    } else {
+        return false;
+    }
+};
+myEvents.on('updateFans', function (room_id, owner_uid) {
+    var optionsfordetail = {
+        method: 'GET',
+        encoding: null,
+        url: 'http://www.yy.com/live/detail?uid=' + owner_uid +
+        '&sid=' + room_id +
+        '&ssid=' + room_id
+    };
+    request(optionsfordetail, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            try {
+                var parse = JSON.parse(body);
+                var numOfFun = parse.data.numOfFun;
+                myEvents.emit('updateTable', numOfFun, room_id);
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    });
+});
 
+myEvents.on('updateTable', function (numOfFun, room_id) {
 
+    var updateSql='update yy set fans=? where room_id =?';
+    var updateParams=[numOfFun,room_id];
+    conn.query(updateSql,updateParams,function(err, rows, field){
+        if(err){
+            console.log('------------sql update err--------------'+err)
+        }
+    })
+});

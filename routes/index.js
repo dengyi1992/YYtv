@@ -32,7 +32,22 @@ router.get('/start', function (req, res, next) {
     isRunning = true;
     res.json({msg: 'copy that 爬虫开始.......'})
 });
+router.get('/updateFans',function(req,res,next){
+    rule.second = times;
+    for (var i = 0; i < 60; i = i + 2) {
+        times.push(i);
+    }
 
+    schedule.scheduleJob(rule, function () {
+        if(timeTask.getFans()){
+            console.log('------------粉丝更新结束---------------')
+            this.cancel();
+        }
+
+    });
+    res.render('index', {title: 'Express'});
+
+});
 myEvents.on('start', function () {
     rule.second = times;
     for (var i = 0; i < 60; i = i + 2) {
